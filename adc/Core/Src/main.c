@@ -28,6 +28,7 @@ Lab 03 ADC Thermistor
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <math.h>
 
 /* USER CODE END Includes */
 
@@ -57,8 +58,9 @@ SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN PV */
 
 int count = 0;
-unsigned int adcInput = 0;
+int adcInput = 0;
 float temperature = 0.0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,7 +77,6 @@ void MX_USB_HOST_Process(void);
 int __io_putchar(int ch);
 int getadcvalue();
 float  convertAnalogToTemperature(unsigned int);
-float  approximateTemperatureFloat(unsigned int);
 
 /* USER CODE END PFP */
 
@@ -131,6 +132,7 @@ int main(void)
 	  count++;
 
 
+	  //adcInput = getadcvalue();
 	  int adcSumForAverage = 0;
 	  for (int i = 0; i < 100; i ++)
 	  {
@@ -139,11 +141,11 @@ int main(void)
 	  }
 	  adcInput  = (adcSumForAverage / 100);
 
-	  printf("adc = %i \n", adcInput);
-
 	  temperature = convertAnalogToTemperature(adcInput);
 
 	  printf("Temperature : %.1f \n", temperature);
+
+	  //printf("adcvalue = %i \n", adcInput);
 
 
 
@@ -451,10 +453,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 //**********************************************************************  Start of user Functions
 
-float  approximateTemperatureFloat(unsigned int analogReadValue)
-{
-  return 19.695*analogReadValue+15.625;
-}
 
 float  convertAnalogToTemperature(unsigned int analogReadValue)
 	{
@@ -464,8 +462,6 @@ float  convertAnalogToTemperature(unsigned int analogReadValue)
 
 	  return (1/((log(((10000.0 * analogReadValue) / (4095.0 - analogReadValue))/100000.0)/3950.0) + (1 / (273.15 + 25.000)))) - 273.15;
 	}
-
-
 
 int getadcvalue()
 {
@@ -516,8 +512,5 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
